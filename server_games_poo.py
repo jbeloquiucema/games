@@ -6,7 +6,7 @@ from exchange_rate import get_xr
 app = Flask(__name__)
 
 
-@app.route('/games', methods=["GET"])
+@app.route('/api/games', methods=["GET"])
 def get_games():
     games = game_controller_poo.get_games()
     games_list=[]
@@ -15,7 +15,7 @@ def get_games():
         games_list.append(elem)
     return jsonify(games_list)
 
-@app.route("/game/create", methods=["POST"])
+@app.route("/api/game/create", methods=["POST"])
 def insert_game():
     game_details = request.get_json()
     game_code = game_details["game_code"]
@@ -29,7 +29,7 @@ def insert_game():
     return jsonify(result)
 
 
-@app.route("/game/modify", methods=["PUT"])
+@app.route("/api/game/modify", methods=["PUT"])
 def update_game():
     game_details = request.get_json()
     game_code = game_details["game_code"]
@@ -43,18 +43,18 @@ def update_game():
     return jsonify(result)
 
 
-@app.route("/game/eliminate/<game_code>", methods=["DELETE"])
+@app.route("/api/game/eliminate/<game_code>", methods=["DELETE"])
 def delete_game(game_code):
     result = game_controller_poo.delete_game(game_code)
     return jsonify(result)
 
 
-@app.route("/game/<game_code>", methods=["GET"])
+@app.route("/api/game/<game_code>", methods=["GET"])
 def get_game_by_id(game_code):
     game = game_controller_poo.get_by_id(game_code)
     return jsonify(game)
 
-@app.route("/game/usd/<game_code>", methods=["GET"])
+@app.route("/api/game/usd/<game_code>", methods=["GET"])
 def get_game_by_id_usd(game_code):
     game = game_controller_poo.get_by_id(game_code)
     xr = get_xr()
@@ -62,6 +62,15 @@ def get_game_by_id_usd(game_code):
     game['price'] = round(price_usd,2)
     return jsonify(game)
 
+@app.route("/api/game/<game_code>", methods=['GET'])
+def get_game_by_id(game_code):
+    game = game_controller_poo.get_by_id(game_code)
+    if game_code == None:
+        return jsonify({"error": "no date info given"})
+    else:
+        average_price = games.mean([int(game_code.price) for game_code in get_games])
+        average_num_players = games.mean([int(game_code.num_players) for game_code in get:games])
+        return jsonify({"average_price": average_price, "average_num_players": average_num_players})
 create_tables()
 
 app.run()
