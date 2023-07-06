@@ -67,5 +67,8 @@ def get_games():
         list_of_games.append(game_to_add)
     return list_of_games
 
-
-
+def games_average():
+    games = get_games()
+    average_price = games.mean([game.price for game in games])
+    average_num_players = games.mean([game.num_players for games in games])
+    return average_price, average_num_players
