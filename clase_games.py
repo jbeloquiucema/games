@@ -28,3 +28,15 @@ class Game:
             'category': self.category,
             'platform': self.platform
         }
+class Game_Average(Game):
+    def __init__(self, game_code, name,num_players, price, min_age, category, platform, average_price, average_num_players) -> None:
+        super().__init__(self, game_code, name,num_players, price, min_age, category, platform)
+        self.average_price = average_price
+        self.average_num_players = average_num_players
+
+
+    def serialize_average(self):
+        return {
+            'Average Price': self.price,
+            'Average Num players': self.num_players
+        }
